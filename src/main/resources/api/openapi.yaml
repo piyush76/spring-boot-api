@@ -1,0 +1,272 @@
+openapi: 3.0.3
+info:
+  title: User Pages API
+  description: API for managing user pages with jOOQ and Spring Boot
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: User Pages
+    description: API for managing user pages
+paths:
+  /users/{userId}/companies/{companyId}/pages:
+    get:
+      tags:
+        - User Pages
+      summary: Get all pages for a user in a company
+      description: Retrieves all pages associated with a specific user in a specific company
+      operationId: getUserPages
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: companyId
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved pages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPage'
+        '404':
+          description: User or company not found
+    delete:
+      tags:
+        - User Pages
+      summary: Delete all pages for a user in a company
+      description: Deletes all pages associated with a user in a company
+      operationId: deleteAllUserPages
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: companyId
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Pages successfully deleted
+  /users/{userId}/companies/{companyId}/pages/{pageId}:
+    get:
+      tags:
+        - User Pages
+      summary: Get a specific page for a user in a company
+      description: Retrieves a specific page associated with a user in a company
+      operationId: getUserPage
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: companyId
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: string
+        - name: pageId
+          in: path
+          description: Page ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved the page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPage'
+        '404':
+          description: Page, user, or company not found
+    put:
+      tags:
+        - User Pages
+      summary: Create or update a page for a user in a company
+      description: Creates a new page or updates an existing page for a user in a company
+      operationId: saveUserPage
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: companyId
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: string
+        - name: pageId
+          in: path
+          description: Page ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User page object to create or update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPage'
+      responses:
+        '200':
+          description: Page successfully updated
+        '201':
+          description: Page successfully created
+        '400':
+          description: Invalid input data
+    delete:
+      tags:
+        - User Pages
+      summary: Delete a specific page for a user in a company
+      description: Deletes a specific page associated with a user in a company
+      operationId: deleteUserPage
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: companyId
+          in: path
+          description: Company ID
+          required: true
+          schema:
+            type: string
+        - name: pageId
+          in: path
+          description: Page ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Page successfully deleted
+        '404':
+          description: Page, user, or company not found
+components:
+  schemas:
+    UserPage:
+      type: object
+      properties:
+        companyId:
+          type: string
+          description: Company identifier
+          example: COMP001
+        personnelId:
+          type: integer
+          format: int64
+          description: User identifier
+          example: 1001
+        pageId:
+          type: string
+          description: Page identifier
+          example: PAGE001
+        adminRole:
+          type: string
+          description: User's role for this page
+          example: EDITOR
+      required:
+        - companyId
+        - personnelId
+        - pageId
+    CompanyPage:
+      type: object
+      properties:
+        companyId:
+          type: string
+          description: Company identifier
+          example: COMP001
+        pageId:
+          type: string
+          description: Page identifier
+          example: PAGE001
+      required:
+        - companyId
+        - pageId
+    UserCompany:
+      type: object
+      properties:
+        companyId:
+          type: string
+          description: Company identifier
+          example: COMP001
+        personnelId:
+          type: integer
+          format: int64
+          description: User identifier
+          example: 1001
+        status:
+          type: string
+          description: User status in the company
+          example: A
+        defaultFacilityId:
+          type: string
+          description: Default facility identifier
+          example: FACILITY001
+        defaultHub:
+          type: string
+          description: Default hub
+          example: HUB001
+        adminRole:
+          type: string
+          description: User's role in the company
+          example: ADMIN
+        dataSource:
+          type: string
+          description: Data source
+          example: SOURCE001
+        lockoutDate:
+          type: string
+          format: date-time
+          description: Date when user was locked out
+        defaultOpsEntityId:
+          type: string
+          description: Default operations entity identifier
+          example: OPS001
+        itarRole:
+          type: string
+          description: ITAR role
+          example: ROLE001
+        msdsOcRole:
+          type: string
+          description: MSDS OC role
+          example: Y
+        userPreferenceData:
+          type: string
+          description: User preference data
+          example: "{\"theme\":\"dark\"}"
+      required:
+        - companyId
+        - personnelId
