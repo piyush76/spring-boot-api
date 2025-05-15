@@ -1,10 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.5'
-    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.example.userpages'
+group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -38,4 +38,15 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// Add task to create a fat JAR with all dependencies
+tasks.register('fatJar', Jar) {
+    archiveClassifier = 'fat'
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
